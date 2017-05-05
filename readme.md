@@ -14,6 +14,7 @@
     * create:clients
     * read:clients
     * update:clients
+    * delete:clients
 
 * Create a file called .auth0 that only you can read that will set environment variables for DOMAIN, CLIENT_ID, and CLIENT_SECRET. For example:
 
