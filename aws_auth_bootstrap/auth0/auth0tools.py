@@ -23,10 +23,10 @@ def create_auth0_client(config=auth0_client_config()):
     return Auth0(domain, token['access_token'])
 
 
-def create_aws_saml_client(account_name, account_id):
+def create_aws_saml_client(client_name, account_id):
     create_client_request = json.loads(
         pkg_resources.resource_string(resource_package, 'resources/base-auth0-client-message.json'))
-    create_client_request['name'] = account_name
+    create_client_request['name'] = client_name
     create_client_request['client_metadata'] = {
         "aws_account_number": account_id
     }
