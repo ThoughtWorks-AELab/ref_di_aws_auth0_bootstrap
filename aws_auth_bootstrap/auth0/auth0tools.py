@@ -7,6 +7,8 @@ import pkg_resources
 import boto3
 import urllib.request
 
+from aws_auth_bootstrap.auth0.script_generator import ScriptGenerator
+
 resource_package = __name__
 
 
@@ -54,22 +56,29 @@ def create_aws_saml_provider(client_id, name):
         Name=name)
 
 
-class Auth0ScriptGenerator:
-    def generate_hierarchy_script(self, role_hierarchy):
-        pass
-
-
 class Auth0Builder:
-    def __init__(self, auth0_client=create_auth0_client(), script_generator=Auth0ScriptGenerator()):
+    def __init__(self, auth0_client=create_auth0_client(), script_generator=ScriptGenerator()):
         self.auth0_client = auth0_client
         self.script_generator = script_generator
 
-    def deploy_rule_hierarchy(self, role_hierarchy_rule_name, order, role_hierarchy):
+    def deploy_rules(self, client_name, config):
+        self.deploy_rule_hierarchy(client_name, config)
+        self.deploy_github_connection_rule(client_name)
+
+    def deploy_rule_hierarchy(self, role_hierarchy_rule_name, config):
         # TODO: implement updates
-        script = pkg_resources.resource_string(resource_package, 'resources/')
-        self.auth0_client.rules().create({
-            "name": role_hierarchy_rule_name,
-            "script": self.script_generator.generate_script(role_hierarchy),
-            "order": order,
+        self.auth0_client.rules.create({
+            "name": role_hierarchy_rule_name + "-hierarchy-rule",
+            "script": self.script_generator.generate_hierarchy(config),
+            "order": 2,
+            "stage": "login_success"
+        })
+
+    def deploy_github_connection_rule(self, client_name):
+        # TODO: implement updates
+        self.auth0_client.rules.create({
+            "name": client_name + "-github-rule",
+            "script": pkg_resources.resource_string(resource_package, 'resources/github_connection.js').decode("utf-8"),
+            "order": 1,
             "stage": "login_success"
         })

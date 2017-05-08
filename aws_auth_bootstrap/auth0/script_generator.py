@@ -5,34 +5,10 @@ class ScriptGenerator:
     def __init__(self):
         pass
 
-    def generate_role_mapping(self, role_tuple, saml_provider):
-        aws_role_function = f"""
-            function(user) {{
-                return "arn:aws:iam::" +
-                    context.clientMetadata.aws_account_number +
-                    ":role/{role_tuple[1]},arn:aws:iam::" +
-                    context.clientMetadata.aws_account_number +
-                    ":saml-provider/{saml_provider}"
-            }}
-        """
-
-        return f"""{{ idpRole:"{role_tuple[0]}", awsRole: {aws_role_function} }}"""
-
-    def generate_role_map(self, config):
-        role_map = reduce(lambda acc, item: acc + ",\n" + item,
-                          map(lambda role_tuple: self.generate_role_mapping(role_tuple, config['saml_provider_name']),
-                              config['roles']))
-        if config:
-            return f"""[
-                    {role_map}
-            ]"""
-        else:
-            return f"[]"
-
     def generate_hierarchy(self, config):
         return f"""
             function (user, context, callback) {{
-                roleMapping = {self.generate_role_map(config)};
+                roleMapping = {self.__generate_role_map(config)};
                 
                 function hasRole(idpRole, user) {{
                     return user.app_metadata.roles.filter(function(mapping){{
@@ -54,3 +30,27 @@ class ScriptGenerator:
                 callback(null, user, context);
             }}
         """
+
+    def __generate_role_mapping(self, role_tuple, saml_provider):
+        aws_role_function = f"""
+            function(user) {{
+                return "arn:aws:iam::" +
+                    context.clientMetadata.aws_account_number +
+                    ":role/{role_tuple[1]},arn:aws:iam::" +
+                    context.clientMetadata.aws_account_number +
+                    ":saml-provider/{saml_provider}"
+            }}
+        """
+
+        return f"""{{ idpRole:"{role_tuple[0]}", awsRole: {aws_role_function} }}"""
+
+    def __generate_role_map(self, config):
+        role_map = reduce(lambda acc, item: acc + ",\n" + item,
+                          map(lambda role_tuple: self.__generate_role_mapping(role_tuple, config['saml_provider_name']),
+                              config['roles']))
+        if config:
+            return f"""[
+                    {role_map}
+            ]"""
+        else:
+            return f"[]"
