@@ -12,6 +12,6 @@ setup(
     ],
     tests_require=[
         'pytest',
-        'boto==2.46.1'
+        'boto==2.46.1',
     ],
 )

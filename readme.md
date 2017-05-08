@@ -15,13 +15,19 @@
     * read:clients
     * update:clients
     * delete:clients
+    * create:rules
+    * read:rules
+    * update:rules
+    * delete:rules
 
-* Create a file called .auth0 that only you can read that will set environment variables for DOMAIN, CLIENT_ID, and CLIENT_SECRET. For example:
+* Create a file called .auth0 that only you can read that will set environment variables:
 
         #.auth0
         export AUTH0_DOMAIN=myaccount.auth0.com
         export AUTH0_CLIENT_ID=exampleid
-        export AUTH0_CLIENT_SECRET=examplesecret
+        export AUTH0_CLIENT_SECRET=********
+        export AWS_ACCESS_KEY_ID=AKIAJRKDMHJTUJ48NOKFA
+        export AWS_SECRET_ACCESS_KEY=********************
 
         chmod 700 .creds
         . .auth0

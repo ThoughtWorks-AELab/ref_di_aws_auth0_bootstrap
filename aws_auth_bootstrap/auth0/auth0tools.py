@@ -52,3 +52,24 @@ def create_aws_saml_provider(client_id, name):
     return boto3.client('iam').create_saml_provider(
         SAMLMetadataDocument=saml_metadata_document,
         Name=name)
+
+
+class Auth0ScriptGenerator:
+    def generate_hierarchy_script(self, role_hierarchy):
+        pass
+
+
+class Auth0Builder:
+    def __init__(self, auth0_client=create_auth0_client(), script_generator=Auth0ScriptGenerator()):
+        self.auth0_client = auth0_client
+        self.script_generator = script_generator
+
+    def deploy_rule_hierarchy(self, role_hierarchy_rule_name, order, role_hierarchy):
+        # TODO: implement updates
+        script = pkg_resources.resource_string(resource_package, 'resources/')
+        self.auth0_client.rules().create({
+            "name": role_hierarchy_rule_name,
+            "script": self.script_generator.generate_script(role_hierarchy),
+            "order": order,
+            "stage": "login_success"
+        })
