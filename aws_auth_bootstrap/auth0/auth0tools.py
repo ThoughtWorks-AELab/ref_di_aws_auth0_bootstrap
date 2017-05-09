@@ -47,9 +47,18 @@ class Auth0Builder:
 
     def create_aws_saml_provider(self, client_id, name):
         saml_metadata_document = self.get_saml_metadata_document(auth0_client_config()['domain'], client_id)
-        return boto3.client('iam').create_saml_provider(
-            SAMLMetadataDocument=saml_metadata_document,
-            Name=name)
+        client = boto3.client('iam')
+        matching_saml_providers = list(
+            filter(lambda provider: provider["Arn"].endswith(name), client.list_saml_providers()['SAMLProviderList']))
+        if len(matching_saml_providers) > 0:
+            return client.update_saml_provider(
+                SAMLProviderArn=matching_saml_providers[0]["Arn"],
+                SAMLMetadataDocument=saml_metadata_document
+            )
+        else:
+            return client.create_saml_provider(
+                SAMLMetadataDocument=saml_metadata_document,
+                Name=name)
 
     def configure_sso(self, client_name, account_id):
         # TODO: make this idempotent so if one exists, it still builds the other
@@ -70,7 +79,6 @@ class Auth0Builder:
         })
 
     def deploy_github_connection_rule(self, client_name):
-        # TODO: implement updates
         self.deploy_or_overwrite_rule({
             "name": client_name + "-github-rule",
             "script": pkg_resources.resource_string(resource_package, 'resources/github_connection.js').decode("utf-8"),

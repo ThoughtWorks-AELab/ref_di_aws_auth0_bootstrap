@@ -23,6 +23,11 @@ def test_configure_sso():
     assert_saml_is_configured(created['client'])
     assert_aws_provider_is_configured(saml_provider_name)
 
+def test_configure_sso_is_idempotent():
+    Auth0Builder().configure_sso(client_name, account_id)
+    created = Auth0Builder().configure_sso(client_name, account_id)
+    assert_saml_is_configured(created['client'])
+    assert_aws_provider_is_configured(saml_provider_name)
 
 def test_deploy_rules():
     Auth0Builder().deploy_rules(client_name, {
