@@ -2,7 +2,7 @@ from time import time
 
 import boto3
 
-from aws_auth_bootstrap.auth0.auth0tools import configure_sso, create_auth0_client, Auth0Builder
+from aws_auth_bootstrap.auth0.auth0tools import create_auth0_client, Auth0Builder
 
 client_name = 'testaccount' + str(int(time() * 1000))
 account_id = "123-123-123"
@@ -19,12 +19,30 @@ def teardown_function(fn):
 
 
 def test_configure_sso():
-    created = configure_sso(client_name, account_id)
+    created = Auth0Builder().configure_sso(client_name, account_id)
     assert_saml_is_configured(created['client'])
     assert_aws_provider_is_configured(saml_provider_name)
 
 
 def test_deploy_rules():
+    Auth0Builder().deploy_rules(client_name, {
+        "saml_provider_name": saml_provider_name,
+        "roles": [
+            ("auth0-role-1", "aws-role-1"),
+            ("auth0-role-2", "aws-role-2")
+        ]
+    })
+    assert_rules_are_deployed()
+
+
+def test_deploy_rules_is_idempotent():
+    Auth0Builder().deploy_rules(client_name, {
+        "saml_provider_name": saml_provider_name,
+        "roles": [
+            ("auth0-role-1", "aws-role-1"),
+            ("auth0-role-2", "aws-role-2")
+        ]
+    })
     Auth0Builder().deploy_rules(client_name, {
         "saml_provider_name": saml_provider_name,
         "roles": [
