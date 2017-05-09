@@ -33,13 +33,23 @@ class Auth0Builder:
         self.script_generator = script_generator
 
     def create_aws_saml_client(self, client_name, account_id):
+        matching_clients = list(filter(lambda c: c['name'] == client_name, self.auth0_client.clients.all()))
         create_client_request = json.loads(
             pkg_resources.resource_string(resource_package, 'resources/base-auth0-client-message.json'))
         create_client_request['name'] = client_name
         create_client_request['client_metadata'] = {
             "aws_account_number": account_id
         }
-        return self.auth0_client.clients.create(create_client_request)
+
+        if len(matching_clients) == 0:
+            return self.auth0_client.clients.create(create_client_request)
+        else:
+            del(create_client_request['jwt_configuration']['secret_encoded'])
+            return self.auth0_client.clients.update(matching_clients[0]['client_id'], create_client_request)
+
+
+
+
 
     def get_saml_metadata_document(self, auth0_host, client_id):
         # TODO: check return code
@@ -61,7 +71,6 @@ class Auth0Builder:
                 Name=name)
 
     def configure_sso(self, client_name, account_id):
-        # TODO: make this idempotent so if one exists, it still builds the other
         new_client = self.create_aws_saml_client(client_name, account_id)
         new_provider = self.create_aws_saml_provider(new_client['client_id'], "auth0-" + client_name)
         return {"client": new_client, "provider": new_provider}

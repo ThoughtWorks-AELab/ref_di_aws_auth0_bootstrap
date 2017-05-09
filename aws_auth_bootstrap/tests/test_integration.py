@@ -23,11 +23,19 @@ def test_configure_sso():
     assert_saml_is_configured(created['client'])
     assert_aws_provider_is_configured(saml_provider_name)
 
+
 def test_configure_sso_is_idempotent():
     Auth0Builder().configure_sso(client_name, account_id)
     created = Auth0Builder().configure_sso(client_name, account_id)
     assert_saml_is_configured(created['client'])
     assert_aws_provider_is_configured(saml_provider_name)
+
+
+def test_saml_client_creation_is_idempotent():
+    Auth0Builder().create_aws_saml_client(client_name, account_id)
+    Auth0Builder().create_aws_saml_client(client_name, account_id)
+    assert len(clients_by_name(client_name)) == 1
+
 
 def test_deploy_rules():
     Auth0Builder().deploy_rules(client_name, {
@@ -92,8 +100,13 @@ def providers_from_name(provider_name, client):
 
 def delete_client_by_name(name):
     auth0_client = create_auth0_client()
-    for client in filter(lambda c: c['name'] == name, auth0_client.clients.all()):
+    for client in clients_by_name(name):
         auth0_client.clients.delete(client['client_id'])
+
+
+def clients_by_name(name):
+    auth0_client = create_auth0_client()
+    return list(filter(lambda c: c['name'] == name, auth0_client.clients.all()))
 
 
 def delete_provider_by_name(name):

@@ -2,6 +2,11 @@
 * virtualenv
 * an auth0 account
 
+## Assumptions
+* Names are unique. This is not enforced by auth0, but we will overwrite configuration with
+configuration if the name is used. If this is not acceptable, this code will need to be changed to save
+state of the client ids
+
 ## Installation
 * prepare the python environment
 
