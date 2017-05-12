@@ -1,13 +1,13 @@
 import json
 
-from auth0.v3.authentication import GetToken
-from auth0.v3.management import Auth0
 import os
 import pkg_resources
 import boto3
 import urllib.request
+from auth0.v3.authentication import GetToken
+from auth0.v3.management import Auth0
 
-from aws_auth_bootstrap.auth0.script_generator import ScriptGenerator
+from aws_auth_bootstrap.builders.script_generator import ScriptGenerator
 
 resource_package = __name__
 
@@ -44,12 +44,8 @@ class Auth0Builder:
         if len(matching_clients) == 0:
             return self.auth0_client.clients.create(create_client_request)
         else:
-            del(create_client_request['jwt_configuration']['secret_encoded'])
+            del (create_client_request['jwt_configuration']['secret_encoded'])
             return self.auth0_client.clients.update(matching_clients[0]['client_id'], create_client_request)
-
-
-
-
 
     def get_saml_metadata_document(self, auth0_host, client_id):
         # TODO: check return code

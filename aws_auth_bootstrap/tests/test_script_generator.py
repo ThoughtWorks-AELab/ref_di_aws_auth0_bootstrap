@@ -1,7 +1,7 @@
 import json
 import execjs
 
-from aws_auth_bootstrap.auth0.script_generator import ScriptGenerator
+from aws_auth_bootstrap.builders.script_generator import ScriptGenerator
 
 
 def run_test_script(script, user, context):

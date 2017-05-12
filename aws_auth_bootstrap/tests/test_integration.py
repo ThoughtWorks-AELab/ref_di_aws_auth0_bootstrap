@@ -2,7 +2,7 @@ from time import time
 
 import boto3
 
-from aws_auth_bootstrap.auth0.auth0tools import create_auth0_client, Auth0Builder
+from aws_auth_bootstrap.builders.auth0tools import Auth0Builder, create_auth0_client
 
 client_name = 'testaccount' + str(int(time() * 1000))
 account_id = "123-123-123"
