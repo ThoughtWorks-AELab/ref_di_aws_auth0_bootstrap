@@ -11,7 +11,6 @@ state of the client ids
 * prepare the python environment
 
         virtualenv -p python3 .env
-        pip install -r requirements.txt
 
 * create an auth0 [non-interactive client](https://auth0.com/docs/api/management/v2/tokens#1-create-a-client).
     You might have to [enable the APIs feature](https://manage.auth0.com/#/account/advanced) in your advanced settings.

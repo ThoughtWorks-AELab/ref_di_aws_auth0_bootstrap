@@ -3,7 +3,7 @@ import subprocess
 
 import shutil
 
-from aws_auth_bootstrap.builders.auth0tools import Auth0Builder
+from aws_auth_bootstrap.builders.auth0tools import Auth0Builder, create_auth0_client
 
 resource_package = __name__
 
@@ -49,16 +49,16 @@ class Bootstrap:
         self.check_for_terraform()
 
     def run(self, config):
-        auth0builder = Auth0Builder(config["idp"])
+        auth0builder = Auth0Builder(create_auth0_client(config["idp"]))
 
-        # auth0builder.deploy_rules(sso_config['project_name'], {
-        #     "saml_provider_name": sso_config['saml_provider_name'],
-        #     "roles": sso_config['roles']
-        # })
+        auth0builder.deploy_rules(sso_config['project_name'], {
+            "saml_provider_name": sso_config['saml_provider_name'],
+            "roles": sso_config['roles']
+        })
 
         accounts = config["accounts"]
         for account in accounts:
-            # auth0builder.configure_sso(account['name'], account['aws_account_number'])
+            auth0builder.configure_sso(account['name'], account['aws_account_number'])
             self.build_policies(account['terraform_dir'], account, config["project_name"])
 
     def expect_success(self, return_code):

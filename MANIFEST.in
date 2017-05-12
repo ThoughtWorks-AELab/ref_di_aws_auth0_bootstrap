@@ -1,0 +1,2 @@
+recursive-include aws_auth_bootstrap/builders/resources *
+recursive-include aws_auth_bootstrap/resources *

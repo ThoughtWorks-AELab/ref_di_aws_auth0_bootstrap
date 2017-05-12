@@ -1,9 +1,9 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='aws-auth-bootstrap',
-    packages=['aws_auth_bootstrap', 'aws_auth_bootstrap/builders'],
-    include_package_data=False,
+    packages=find_packages(exclude=['contrib', 'docs', 'tests']),
+    include_package_data=True,
     install_requires=[
         'auth0-python==3.0.0',
         'boto3==1.4.4'
