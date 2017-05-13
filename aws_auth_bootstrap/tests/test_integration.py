@@ -9,6 +9,9 @@ account_id = "123-123-123"
 saml_provider_name = "auth0-" + client_name
 role_hierarchy_rule_name = client_name + "-hierarchy-rule"
 github_connection_rule_name = client_name + "-github-rule"
+github_connection_name = client_name + "-connection"
+fake_github_id = "fake-github-id"
+fake_github_secret = "fake-github-secret"
 
 
 def teardown_function(fn):
@@ -16,17 +19,19 @@ def teardown_function(fn):
     delete_provider_by_name(saml_provider_name)
     delete_rules_by_name(role_hierarchy_rule_name)
     delete_rules_by_name(github_connection_rule_name)
+    delete_connection_by_name(github_connection_name)
 
 
 def test_configure_sso():
-    created = Auth0Builder().configure_sso(client_name, account_id)
+    created = Auth0Builder().configure_sso(client_name, account_id, fake_github_id, fake_github_secret)
     assert_saml_is_configured(created['client'])
+    assert_github_connection_is_configured(created['client'])
     assert_aws_provider_is_configured(saml_provider_name)
 
 
 def test_configure_sso_is_idempotent():
-    Auth0Builder().configure_sso(client_name, account_id)
-    created = Auth0Builder().configure_sso(client_name, account_id)
+    Auth0Builder().configure_sso(client_name, account_id, fake_github_id, fake_github_secret)
+    created = Auth0Builder().configure_sso(client_name, account_id, fake_github_id, fake_github_secret)
     assert_saml_is_configured(created['client'])
     assert_aws_provider_is_configured(saml_provider_name)
 
@@ -118,7 +123,32 @@ def delete_provider_by_name(name):
         )
 
 
+def connections_by_name(name):
+    auth0_client = create_auth0_client()
+    return list(filter(lambda c: c['name'] == name, auth0_client.connections.all()))
+
+
+def delete_connection_by_name(name):
+    auth0_client = create_auth0_client()
+    for connection in connections_by_name(name):
+        auth0_client.connections.delete(connection['id'])
+
+
 def assert_saml_is_configured(client):
     assert client['addons'] is not None
     assert client['addons']['samlp'] is not None
     assert client['addons']['samlp']['audience'] == 'https://signin.aws.amazon.com/saml'
+
+
+def assert_github_connection_is_configured(client, auth0_client=create_auth0_client()):
+    client_id = client['client_id']
+    connections = list(filter(lambda conn: client_id in conn['enabled_clients'] and conn['name'] == github_connection_name, auth0_client.connections.all()))
+    print("connections: " + str(connections))
+    assert len(connections) == 1
+    assert connections[0]['strategy'] == 'github'
+    # assert connections[0]['realms'] == ['github'] //TODO: what should this be, if anything?
+    assert connections[0]['options']['profile'] == True
+    assert connections[0]['options']['client_id'] == fake_github_id
+    assert connections[0]['options']['client_secret'] == fake_github_secret
+
+    assert connections[0]['name'] == github_connection_name

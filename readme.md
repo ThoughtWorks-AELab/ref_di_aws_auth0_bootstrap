@@ -23,6 +23,12 @@ state of the client ids
     * read:rules
     * update:rules
     * delete:rules
+    * read:connections
+    * update:connections
+    * delete:connections
+
+* create a [github oauth application](https://auth0.com/docs/connections/social/github) for your personal or group account.
+You will need the client id and secret.
 
 * Create a file called .auth0 that only you can read that will set environment variables:
 

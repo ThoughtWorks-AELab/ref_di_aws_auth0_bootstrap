@@ -13,7 +13,7 @@ resource_package = __name__
 
 
 def auth0_client_config():
-    return {
+    return {  # TODO: get rid of this thing
         "domain": os.environ['AUTH0_HOST'] + ".auth0.com",
         "client_id": os.environ['AUTH0_CLIENT_ID'],
         "client_secret": os.environ['AUTH0_CLIENT_SECRET']
@@ -66,10 +66,29 @@ class Auth0Builder:
                 SAMLMetadataDocument=saml_metadata_document,
                 Name=name)
 
-    def configure_sso(self, client_name, account_id):
+    def configure_sso(self, client_name, account_id, github_client_id, github_client_secret):
         new_client = self.create_aws_saml_client(client_name, account_id)
         new_provider = self.create_aws_saml_provider(new_client['client_id'], "auth0-" + client_name)
-        return {"client": new_client, "provider": new_provider}
+        new_connection = self.create_github_connection(f"{client_name}-connection", new_client['client_id'],
+                                                       github_client_id, github_client_secret)
+        return {"client": new_client, "provider": new_provider, "connection": new_connection}
+
+    def create_github_connection(self, connection_name, enabled_client, github_client_id, github_secret):
+
+        create_connection_request = json.loads(
+            pkg_resources.resource_string(resource_package, 'resources/base-github-connection-message.json'))
+        create_connection_request['name'] = connection_name
+        create_connection_request['enabled_clients'] = [enabled_client]
+        create_connection_request['options']['client_id'] = github_client_id
+        create_connection_request['options']['client_secret'] = github_secret
+
+        connections = list(filter(lambda c: c['name'] == connection_name, self.auth0_client.connections.all()))
+        if len(connections) > 0:
+            del create_connection_request['strategy']
+            del create_connection_request['name']
+            return self.auth0_client.connections.update(connections[0]['id'], create_connection_request)
+        else:
+            return self.auth0_client.connections.create(create_connection_request)
 
     def deploy_rules(self, client_name, config):
         self.deploy_rule_hierarchy(client_name, config)
@@ -92,6 +111,8 @@ class Auth0Builder:
         })
 
     def deploy_or_overwrite_rule(self, body):
+        # TODO: bug - if there is already a rule with a given order,
+        # TODO: it fails. Need to figure out how to handle that situation.
         rules = list(filter(lambda c: c['name'] == body['name'], self.auth0_client.rules.all()))
         if len(rules) == 0:
             self.auth0_client.rules.create(body)

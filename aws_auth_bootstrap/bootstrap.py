@@ -13,7 +13,9 @@ sso_config = {
     "idp": {
         "domain": os.environ['AUTH0_HOST'] + ".auth0.com",
         "client_id": os.environ['AUTH0_CLIENT_ID'],
-        "client_secret": os.environ['AUTH0_CLIENT_SECRET']
+        "client_secret": os.environ['AUTH0_CLIENT_SECRET'],
+        "github_client_id": os.environ['GITHUB_CLIENT_ID'],
+        "github_client_secret": os.environ['GITHUB_CLIENT_SECRET']
     },
     "accounts": [
         {
@@ -58,7 +60,8 @@ class Bootstrap:
 
         accounts = config["accounts"]
         for account in accounts:
-            auth0builder.configure_sso(account['name'], account['aws_account_number'])
+            auth0builder.configure_sso(account['name'], account['aws_account_number'], sso_config['github_client_id'],
+                                       sso_config['github_client_secret'])
             self.build_policies(account['terraform_dir'], account, config["project_name"])
 
     def expect_success(self, return_code):

@@ -12,6 +12,6 @@ setup(
         'pytest-runner',
     ],
     tests_require=[
-        'pytest',
+        'pytest', 'PyExecJS'
     ],
 )
