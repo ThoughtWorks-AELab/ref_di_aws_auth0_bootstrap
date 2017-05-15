@@ -8,7 +8,7 @@ resource_package = __name__
 
 sso_config = {
     "project_name": "reference-implementation",
-    "saml_provider_name": "auth0sso",
+    "saml_provider_name": "auth0-preproduction",
     "idp": {
         "domain": os.environ['AUTH0_HOST'] + ".auth0.com",
         "client_id": os.environ['AUTH0_CLIENT_ID'],
