@@ -1,7 +1,6 @@
 import os
-import subprocess
-
 import shutil
+import subprocess
 
 from aws_auth_bootstrap.builders.auth0tools import Auth0Builder, create_auth0_client
 
@@ -39,8 +38,8 @@ sso_config = {
         # }
     ],
     "roles": [
-        ("dev_admin", "ThoughtWorks_AELab/dev_admin"),
-        ("infra_reader", "ThoughtWorks_AELab/infra_reader")
+        ("ThoughtWorks-AELab/dev_admin", "dev_admin"),
+        ("ThoughtWorks-AELab/infra_reader", "infra_reader")
     ]
 }
 
@@ -59,9 +58,10 @@ class Bootstrap:
         })
 
         accounts = config["accounts"]
+        idp = config['idp']
         for account in accounts:
-            auth0builder.configure_sso(account['name'], account['aws_account_number'], sso_config['github_client_id'],
-                                       sso_config['github_client_secret'])
+            auth0builder.configure_sso(account['name'], account['aws_account_number'], idp['github_client_id'],
+                                       idp['github_client_secret'])
             self.build_policies(account['terraform_dir'], account, config["project_name"])
 
     def expect_success(self, return_code):
@@ -75,7 +75,6 @@ class Bootstrap:
 
         bucket_name = f"{project_name}-{account['name']}"
 
-        # TODO: do we need to check if the tfstate file exists before running init?
         command = ["terraform", "init", "-backend=true",
                    f"-backend-config=bucket={bucket_name}",
                    "-lock=true",

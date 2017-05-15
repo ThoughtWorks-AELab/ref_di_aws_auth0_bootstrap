@@ -11,13 +11,14 @@ function (user, context, callback) {
             "Authorization": "token "+access_token,
             // Remember the Application name registered in github?
             // use it to set User-Agent or request will fail
-            "User-Agent": "Auth0",
+            "User-Agent": "Auth0 SSO DPS Reference Implementation",
         }
     }, function(err, res, data){
         user.err = err;
         if(data){
             // extract github team names to array
-            var github_teams = JSON.parse(data).map(function(team){
+            var parsed = JSON.parse(data)
+            var github_teams = parsed.map(function(team){
                 return team.organization.login + "/" + team.slug;
             });
             // add teams to the application metadata

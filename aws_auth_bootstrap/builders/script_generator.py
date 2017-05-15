@@ -8,18 +8,21 @@ class ScriptGenerator:
     def generate_hierarchy(self, config):
         return f"""
             function (user, context, callback) {{
-                roleMapping = {self.__generate_role_map(config)};
-                
+                var roleMapping = {self.__generate_role_map(config)};
                 function hasRole(idpRole, user) {{
-                    return user.app_metadata.roles.filter(function(mapping){{
-                        return mapping.idpRole = idpRole;
+                    return user.app_metadata.roles.filter(function(userRole){{
+                        return userRole == idpRole;
                     }}).length > 0;
                 }}
                 
-                for (i=0; i < roleMapping.length && !user.awsRole; i++) {{
+                for (var i=0; i < roleMapping.length && !user.awsRole; i++) {{
                     if (hasRole(roleMapping[i].idpRole, user)) {{
                         user.awsRole = roleMapping[i].awsRole(user);
                     }}
+                }}
+                
+                if (!user.awsRole) {{
+                    return callback("No role could be assigned. Please have your admin check mappings between aws role and github team.", user, context);
                 }}
             
                 user.awsRoleSession = user.nickname;

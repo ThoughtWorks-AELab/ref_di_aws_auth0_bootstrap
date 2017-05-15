@@ -86,8 +86,10 @@ class Auth0Builder:
         if len(connections) > 0:
             del create_connection_request['strategy']
             del create_connection_request['name']
+            print(f"Updated connection {connection_name}")
             return self.auth0_client.connections.update(connections[0]['id'], create_connection_request)
         else:
+            print(f"Created connection {connection_name}")
             return self.auth0_client.connections.create(create_connection_request)
 
     def deploy_rules(self, client_name, config):
