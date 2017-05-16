@@ -74,15 +74,16 @@ def test_deploy_rules_is_idempotent():
 #
 # Utility methods
 #
-def assert_rule_is_deployed(name, expected_order, auth0_client=create_auth0_client()):
+def assert_rule_is_deployed(name, auth0_client=create_auth0_client()):
     rules = list(filter(lambda c: c['name'] == name, auth0_client.rules.all()))
     assert len(rules) == 1
-    assert rules[0]['order'] == expected_order
+    return rules[0]
 
 
 def assert_rules_are_deployed():
-    assert_rule_is_deployed(role_hierarchy_rule_name, 2)
-    assert_rule_is_deployed(github_connection_rule_name, 1)
+    hierarchy_rule = assert_rule_is_deployed(role_hierarchy_rule_name)
+    connection_rule = assert_rule_is_deployed(github_connection_rule_name)
+    assert connection_rule['order'] < hierarchy_rule['order']
 
 
 def delete_rules_by_name(name, auth0_client=create_auth0_client()):

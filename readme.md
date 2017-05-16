@@ -44,3 +44,28 @@ You will need the client id and secret.
 
 You will need to source this file prior to running the setup.
 
+# Known Bugs and Issues
+- CLI-based SSO is not yet enabled
+- mapping main IAM account to other accounts
+
+- github-connection.js
+    - Better error handling for non-200 case
+
+- bootstrap.py
+    - better logging in scripts so you can see what actually occurs
+    - validation for config structure so there are better error messages
+    - fix need for multiple places saml provider is specified
+
+- testing
+    - fix tests for javascript to catch edge cases like no role assigned
+
+- misc
+    - set up github teams from script
+    - make testing require option explicit, if possible
+    - refactor
+
+- auth0tools.py
+    - get rid of auth0_client_config function
+
+- terraform:
+    - parameterize the name of the saml provider

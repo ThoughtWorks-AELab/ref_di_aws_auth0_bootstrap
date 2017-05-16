@@ -93,14 +93,13 @@ class Auth0Builder:
             return self.auth0_client.connections.create(create_connection_request)
 
     def deploy_rules(self, client_name, config):
-        self.deploy_rule_hierarchy(client_name, config)
         self.deploy_github_connection_rule(client_name)
+        self.deploy_rule_hierarchy(client_name, config)
 
     def deploy_rule_hierarchy(self, role_hierarchy_rule_name, config):
         self.deploy_or_overwrite_rule({
             "name": role_hierarchy_rule_name + "-hierarchy-rule",
             "script": self.script_generator.generate_hierarchy(config),
-            "order": 2,
             "stage": "login_success"
         })
 
@@ -108,19 +107,15 @@ class Auth0Builder:
         self.deploy_or_overwrite_rule({
             "name": client_name + "-github-rule",
             "script": pkg_resources.resource_string(resource_package, 'resources/github_connection.js').decode("utf-8"),
-            "order": 1,
             "stage": "login_success"
         })
 
     def deploy_or_overwrite_rule(self, body):
-        # TODO: bug - if there is already a rule with a given order,
-        # TODO: it fails. Need to figure out how to handle that situation.
         rules = list(filter(lambda c: c['name'] == body['name'], self.auth0_client.rules.all()))
         if len(rules) == 0:
             self.auth0_client.rules.create(body)
         else:
             self.auth0_client.rules.update(rules[0]['id'], {
                 "name": body['name'],
-                "script": body['script'],
-                "order": body['order']
+                "script": body['script']
             })
