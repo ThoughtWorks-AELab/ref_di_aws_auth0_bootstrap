@@ -9,9 +9,7 @@ function (user, context, callback) {
         headers: {
             // use token authorization to talk to github API
             "Authorization": "token "+access_token,
-            // Remember the Application name registered in github?
-            // use it to set User-Agent or request will fail
-            "User-Agent": "Auth0 SSO DPS Reference Implementation",
+            "User-Agent": "Auth0 Github Connection",
         }
     }, function(err, res, data){
         user.err = err;

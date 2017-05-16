@@ -3,9 +3,9 @@
 * an auth0 account
 
 ## Assumptions
-* Names are unique. This is not enforced by auth0, but we will overwrite configuration with
-configuration if the name is used. If this is not acceptable, this code will need to be changed to save
-state of the client ids
+* Names are unique. This is not enforced by auth0, but we will overwrite
+configuration with configuration if the name is used. If this is not
+acceptable, this code will need to be changed to save state of the client ids
 
 ## Installation
 * prepare the python environment
@@ -13,7 +13,9 @@ state of the client ids
         virtualenv -p python3 .env
 
 * create an auth0 [non-interactive client](https://auth0.com/docs/api/management/v2/tokens#1-create-a-client).
-    You might have to [enable the APIs feature](https://manage.auth0.com/#/account/advanced) in your advanced settings.
+    You might have to [enable the APIs feature](https://manage.auth0.com/#/account/advanced)
+    in your advanced settings.
+
     Makes sure to grant the following scopes to the client:
     * create:clients
     * read:clients
@@ -27,17 +29,26 @@ state of the client ids
     * update:connections
     * delete:connections
 
-* create a [github oauth application](https://auth0.com/docs/connections/social/github) for your personal or group account.
-You will need the client id and secret.
+* create a [github oauth application](https://auth0.com/docs/connections/social/github)
+for your personal or group account. You will need the client id and secret.
 
-* Create a file called .auth0 that only you can read that will set environment variables:
+* create teams for each role you would like to support within AWS.
+Current bootstrap supports dev_admin and infra_reader
+
+* Create a file called .auth0 that only you can read that will set
+environment variables:
 
         #.auth0
         export AUTH0_DOMAIN=myaccount.auth0.com
         export AUTH0_CLIENT_ID=exampleid
         export AUTH0_CLIENT_SECRET=********
-        export AWS_ACCESS_KEY_ID=AKIAJRKDMHJTUJ48NOKFA
-        export AWS_SECRET_ACCESS_KEY=********************
+
+        export PREPROD_AWS_ACCOUNT_NUMBER=0775854933855
+        export PREPROD_AWS_ACCESS_ID=AKIAJRKDMHJTUJ48NOKFA
+        export PREPROD_SECRET_ACCESS_KEY=********************
+
+        export GITHUB_CLIENT_ID=d5kgjgji58124ifjgjfkc
+        export GITHUB_CLIENT_SECRET=*************************
 
         chmod 700 .creds
         . .auth0
@@ -48,9 +59,6 @@ You will need to source this file prior to running the setup.
 - CLI-based SSO is not yet enabled
 - mapping main IAM account to other accounts
 
-- github-connection.js
-    - Better error handling for non-200 case
-
 - bootstrap.py
     - better logging in scripts so you can see what actually occurs
     - validation for config structure so there are better error messages
@@ -58,6 +66,8 @@ You will need to source this file prior to running the setup.
 
 - testing
     - fix tests for javascript to catch edge cases like no role assigned
+    - clear users from auth0 before running tests and run a second time
+    since there are two workflows
 
 - misc
     - set up github teams from script
