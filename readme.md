@@ -59,6 +59,10 @@ You will need to source this file prior to running the setup.
 - CLI-based SSO is not yet enabled
 - mapping main IAM account to other accounts
 
+- github_connection.js
+    - Need to set the User Agent programmatically to match the Github
+    application name as requested by Github
+
 - bootstrap.py
     - better logging in scripts so you can see what actually occurs
     - validation for config structure so there are better error messages

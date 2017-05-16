@@ -139,7 +139,7 @@ def assert_saml_is_configured(client):
     assert client['addons'] is not None
     assert client['addons']['samlp'] is not None
     assert client['addons']['samlp']['audience'] == 'https://signin.aws.amazon.com/saml'
-
+    assert client['addons']['aws'] is not None
 
 def assert_github_connection_is_configured(client, auth0_client=create_auth0_client()):
     client_id = client['client_id']
