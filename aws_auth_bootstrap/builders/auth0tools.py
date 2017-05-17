@@ -12,15 +12,7 @@ from aws_auth_bootstrap.builders.script_generator import ScriptGenerator
 resource_package = __name__
 
 
-def auth0_client_config():
-    return {  # TODO: get rid of this thing
-        "domain": os.environ['AUTH0_HOST'] + ".auth0.com",
-        "client_id": os.environ['AUTH0_CLIENT_ID'],
-        "client_secret": os.environ['AUTH0_CLIENT_SECRET']
-    }
-
-
-def create_auth0_client(config=auth0_client_config()):
+def create_auth0_client(config):
     domain = config["domain"]
     token = GetToken(domain).client_credentials(config["client_id"],
                                                 config["client_secret"], f"https://{domain}/api/v2/")
@@ -28,9 +20,10 @@ def create_auth0_client(config=auth0_client_config()):
 
 
 class Auth0Builder:
-    def __init__(self, auth0_client=create_auth0_client(), script_generator=ScriptGenerator()):
-        self.auth0_client = auth0_client
-        self.script_generator = script_generator
+    def __init__(self, config):
+        self.config = config
+        self.auth0_client = create_auth0_client(config)
+        self.script_generator = ScriptGenerator()
 
     def create_aws_saml_client(self, client_name, account_id):
         matching_clients = list(filter(lambda c: c['name'] == client_name, self.auth0_client.clients.all()))
@@ -52,7 +45,7 @@ class Auth0Builder:
         return urllib.request.urlopen(f"https://{auth0_host}/samlp/metadata/{client_id}").read().decode("utf-8")
 
     def create_aws_saml_provider(self, client_id, name):
-        saml_metadata_document = self.get_saml_metadata_document(auth0_client_config()['domain'], client_id)
+        saml_metadata_document = self.get_saml_metadata_document(self.config['domain'], client_id)
         client = boto3.client('iam')
         matching_saml_providers = list(
             filter(lambda provider: provider["Arn"].endswith(name), client.list_saml_providers()['SAMLProviderList']))

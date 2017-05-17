@@ -74,9 +74,6 @@ You will need to source this file prior to running the setup.
 - additional automation
     - set up github teams from script
 
-- auth0tools.py
-    - get rid of auth0_client_config function
-
 - terraform:
     - main.tf
         aws_iam_policy_document

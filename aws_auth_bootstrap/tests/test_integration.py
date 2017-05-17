@@ -1,3 +1,4 @@
+import os
 from time import time
 
 import boto3
@@ -13,6 +14,14 @@ github_connection_name = client_name + "-connection"
 fake_github_id = "fake-github-id"
 fake_github_secret = "fake-github-secret"
 
+CONFIG = {
+    "domain": os.environ['AUTH0_HOST'] + ".auth0.com",
+    "client_id": os.environ['AUTH0_CLIENT_ID'],
+    "client_secret": os.environ['AUTH0_CLIENT_SECRET']
+}
+
+AUTH0_CLIENT = create_auth0_client(CONFIG)
+
 
 def teardown_function(fn):
     delete_client_by_name(client_name)
@@ -23,27 +32,27 @@ def teardown_function(fn):
 
 
 def test_configure_sso():
-    created = Auth0Builder().configure_sso(client_name, account_id, fake_github_id, fake_github_secret)
+    created = Auth0Builder(CONFIG).configure_sso(client_name, account_id, fake_github_id, fake_github_secret)
     assert_saml_is_configured(created['client'])
     assert_github_connection_is_configured(created['client'])
     assert_aws_provider_is_configured(saml_provider_name)
 
 
 def test_configure_sso_is_idempotent():
-    Auth0Builder().configure_sso(client_name, account_id, fake_github_id, fake_github_secret)
-    created = Auth0Builder().configure_sso(client_name, account_id, fake_github_id, fake_github_secret)
+    Auth0Builder(CONFIG).configure_sso(client_name, account_id, fake_github_id, fake_github_secret)
+    created = Auth0Builder(CONFIG).configure_sso(client_name, account_id, fake_github_id, fake_github_secret)
     assert_saml_is_configured(created['client'])
     assert_aws_provider_is_configured(saml_provider_name)
 
 
 def test_saml_client_creation_is_idempotent():
-    Auth0Builder().create_aws_saml_client(client_name, account_id)
-    Auth0Builder().create_aws_saml_client(client_name, account_id)
+    Auth0Builder(CONFIG).create_aws_saml_client(client_name, account_id)
+    Auth0Builder(CONFIG).create_aws_saml_client(client_name, account_id)
     assert len(clients_by_name(client_name)) == 1
 
 
 def test_deploy_rules():
-    Auth0Builder().deploy_rules(client_name, {
+    Auth0Builder(CONFIG).deploy_rules(client_name, {
         "saml_provider_name": saml_provider_name,
         "roles": [
             ("auth0-role-1", "aws-role-1"),
@@ -54,14 +63,14 @@ def test_deploy_rules():
 
 
 def test_deploy_rules_is_idempotent():
-    Auth0Builder().deploy_rules(client_name, {
+    Auth0Builder(CONFIG).deploy_rules(client_name, {
         "saml_provider_name": saml_provider_name,
         "roles": [
             ("auth0-role-1", "aws-role-1"),
             ("auth0-role-2", "aws-role-2")
         ]
     })
-    Auth0Builder().deploy_rules(client_name, {
+    Auth0Builder(CONFIG).deploy_rules(client_name, {
         "saml_provider_name": saml_provider_name,
         "roles": [
             ("auth0-role-1", "aws-role-1"),
@@ -74,8 +83,8 @@ def test_deploy_rules_is_idempotent():
 #
 # Utility methods
 #
-def assert_rule_is_deployed(name, auth0_client=create_auth0_client()):
-    rules = list(filter(lambda c: c['name'] == name, auth0_client.rules.all()))
+def assert_rule_is_deployed(name):
+    rules = list(filter(lambda c: c['name'] == name, AUTH0_CLIENT.rules.all()))
     assert len(rules) == 1
     return rules[0]
 
@@ -86,9 +95,9 @@ def assert_rules_are_deployed():
     assert connection_rule['order'] < hierarchy_rule['order']
 
 
-def delete_rules_by_name(name, auth0_client=create_auth0_client()):
-    for client in filter(lambda c: c['name'] == name, auth0_client.rules.all()):
-        auth0_client.rules.delete(client['id'])
+def delete_rules_by_name(name):
+    for client in filter(lambda c: c['name'] == name, AUTH0_CLIENT.rules.all()):
+        AUTH0_CLIENT.rules.delete(client['id'])
 
 
 def assert_aws_provider_is_configured(provider_name):
@@ -105,14 +114,12 @@ def providers_from_name(provider_name, client):
 
 
 def delete_client_by_name(name):
-    auth0_client = create_auth0_client()
     for client in clients_by_name(name):
-        auth0_client.clients.delete(client['client_id'])
+        AUTH0_CLIENT.clients.delete(client['client_id'])
 
 
 def clients_by_name(name):
-    auth0_client = create_auth0_client()
-    return list(filter(lambda c: c['name'] == name, auth0_client.clients.all()))
+    return list(filter(lambda c: c['name'] == name, AUTH0_CLIENT.clients.all()))
 
 
 def delete_provider_by_name(name):
@@ -125,14 +132,12 @@ def delete_provider_by_name(name):
 
 
 def connections_by_name(name):
-    auth0_client = create_auth0_client()
-    return list(filter(lambda c: c['name'] == name, auth0_client.connections.all()))
+    return list(filter(lambda c: c['name'] == name, AUTH0_CLIENT.connections.all()))
 
 
 def delete_connection_by_name(name):
-    auth0_client = create_auth0_client()
     for connection in connections_by_name(name):
-        auth0_client.connections.delete(connection['id'])
+        AUTH0_CLIENT.connections.delete(connection['id'])
 
 
 def assert_saml_is_configured(client):
@@ -141,9 +146,12 @@ def assert_saml_is_configured(client):
     assert client['addons']['samlp']['audience'] == 'https://signin.aws.amazon.com/saml'
     assert client['addons']['aws'] is not None
 
-def assert_github_connection_is_configured(client, auth0_client=create_auth0_client()):
+
+def assert_github_connection_is_configured(client):
     client_id = client['client_id']
-    connections = list(filter(lambda conn: client_id in conn['enabled_clients'] and conn['name'] == github_connection_name, auth0_client.connections.all()))
+    connections = list(
+        filter(lambda conn: client_id in conn['enabled_clients'] and conn['name'] == github_connection_name,
+               AUTH0_CLIENT.connections.all()))
     print("connections: " + str(connections))
     assert len(connections) == 1
     assert connections[0]['strategy'] == 'github'

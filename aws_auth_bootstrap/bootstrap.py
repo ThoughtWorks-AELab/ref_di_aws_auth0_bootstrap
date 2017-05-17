@@ -50,7 +50,7 @@ class Bootstrap:
         self.check_for_terraform()
 
     def run(self, config):
-        auth0builder = Auth0Builder(create_auth0_client(config["idp"]))
+        auth0builder = Auth0Builder(config["idp"])
 
         auth0builder.deploy_rules(sso_config['project_name'], {
             "saml_provider_name": sso_config['saml_provider_name'],
