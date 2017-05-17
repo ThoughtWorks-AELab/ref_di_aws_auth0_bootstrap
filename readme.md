@@ -56,7 +56,6 @@ environment variables:
 You will need to source this file prior to running the setup.
 
 # Known Bugs and Issues
-- CLI-based SSO is not yet enabled
 - mapping main IAM account to other accounts
 
 - github_connection.js
@@ -70,16 +69,16 @@ You will need to source this file prior to running the setup.
 
 - testing
     - fix tests for javascript to catch edge cases like no role assigned
-    - clear users from auth0 before running tests and run a second time
-    since there are two workflows
+    - end-to-end CLI test
 
-- misc
+- additional automation
     - set up github teams from script
-    - make testing require option explicit, if possible
-    - refactor
 
 - auth0tools.py
     - get rid of auth0_client_config function
 
 - terraform:
-    - parameterize the name of the saml provider
+    - main.tf
+        - parameterize the name of the saml provider in
+        aws_iam_policy_document
+        - parameterize urn in SAML:aud condition

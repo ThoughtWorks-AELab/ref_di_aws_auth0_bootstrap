@@ -147,7 +147,6 @@ def assert_github_connection_is_configured(client, auth0_client=create_auth0_cli
     print("connections: " + str(connections))
     assert len(connections) == 1
     assert connections[0]['strategy'] == 'github'
-    # assert connections[0]['realms'] == ['github'] //TODO: what should this be, if anything?
     assert connections[0]['options']['profile'] == True
     assert connections[0]['options']['client_id'] == fake_github_id
     assert connections[0]['options']['client_secret'] == fake_github_secret

@@ -48,4 +48,5 @@ def test_generate_policy_from_mapping():
     assert result["error"] is None
     assert "user" in result
     assert "awsRole" in result["user"]
+    print(result["user"]["awsRole"])
     assert result["user"]["awsRole"] == 'arn:aws:iam::1234:role/aws-role-1,arn:aws:iam::1234:saml-provider/zaml'

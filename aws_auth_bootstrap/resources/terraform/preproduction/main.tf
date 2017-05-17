@@ -22,9 +22,9 @@ data "aws_iam_policy_document" "instance-assume-role-policy" {
     }
 
     condition {
-      test     = "StringEquals"
+      test     = "ForAnyValue:StringLike"
       variable = "SAML:aud"
-      values   = ["https://signin.aws.amazon.com/saml"]
+      values   = ["https://signin.aws.amazon.com/saml", "urn:dps-reference-implementation.auth0.com"]
     }
   }
 }
