@@ -63,9 +63,7 @@ You will need to source this file prior to running the setup.
     application name as requested by Github
 
 - bootstrap.py
-    - better logging in scripts so you can see what actually occurs
     - validation for config structure so there are better error messages
-    - fix need for multiple places saml provider is specified
 
 - testing
     - fix tests for javascript to catch edge cases like no role assigned
@@ -73,7 +71,3 @@ You will need to source this file prior to running the setup.
 
 - additional automation
     - set up github teams from script
-
-- terraform:
-    - main.tf
-        aws_iam_policy_document

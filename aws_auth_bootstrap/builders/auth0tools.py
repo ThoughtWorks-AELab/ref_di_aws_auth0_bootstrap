@@ -1,9 +1,8 @@
 import json
-
-import os
-import pkg_resources
-import boto3
 import urllib.request
+
+import boto3
+import pkg_resources
 from auth0.v3.authentication import GetToken
 from auth0.v3.management import Auth0
 
@@ -35,8 +34,10 @@ class Auth0Builder:
         }
 
         if len(matching_clients) == 0:
+            print(f"Creating new client {client_name} for account {account_id}.")
             return self.auth0_client.clients.create(create_client_request)
         else:
+            print(f"Updating existing client {client_name}.")
             del (create_client_request['jwt_configuration']['secret_encoded'])
             return self.auth0_client.clients.update(matching_clients[0]['client_id'], create_client_request)
 
@@ -50,11 +51,13 @@ class Auth0Builder:
         matching_saml_providers = list(
             filter(lambda provider: provider["Arn"].endswith(name), client.list_saml_providers()['SAMLProviderList']))
         if len(matching_saml_providers) > 0:
+            print(f"Updating existing SML provider {name} .")
             return client.update_saml_provider(
                 SAMLProviderArn=matching_saml_providers[0]["Arn"],
                 SAMLMetadataDocument=saml_metadata_document
             )
         else:
+            print(f"Creating new SML provider {name} .")
             return client.create_saml_provider(
                 SAMLMetadataDocument=saml_metadata_document,
                 Name=name)
@@ -77,9 +80,9 @@ class Auth0Builder:
 
         connections = list(filter(lambda c: c['name'] == connection_name, self.auth0_client.connections.all()))
         if len(connections) > 0:
+            print(f"Updating connection {connection_name}")
             del create_connection_request['strategy']
             del create_connection_request['name']
-            print(f"Updated connection {connection_name}")
             return self.auth0_client.connections.update(connections[0]['id'], create_connection_request)
         else:
             print(f"Created connection {connection_name}")
@@ -106,8 +109,10 @@ class Auth0Builder:
     def deploy_or_overwrite_rule(self, body):
         rules = list(filter(lambda c: c['name'] == body['name'], self.auth0_client.rules.all()))
         if len(rules) == 0:
+            print(f"Creating rule {body['name']}")
             self.auth0_client.rules.create(body)
         else:
+            print(f"Updating rule {body['name']}")
             self.auth0_client.rules.update(rules[0]['id'], {
                 "name": body['name'],
                 "script": body['script']

@@ -2,7 +2,7 @@ import os
 import shutil
 import subprocess
 
-from aws_auth_bootstrap.builders.auth0tools import Auth0Builder, create_auth0_client
+from aws_auth_bootstrap.builders.auth0tools import Auth0Builder
 
 resource_package = __name__
 
