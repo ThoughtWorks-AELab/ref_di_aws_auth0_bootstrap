@@ -60,15 +60,22 @@ class Bootstrap:
         accounts = config["accounts"]
         idp = config['idp']
         for account in accounts:
-            auth0builder.configure_sso(account['name'], account['aws_account_number'], idp['github_client_id'],
+            auth0builder.configure_sso(account['name'],
+                                       account['aws_account_number'],
+                                       idp['github_client_id'],
                                        idp['github_client_secret'])
-            self.build_policies(account['terraform_dir'], account, config["project_name"])
+            self.build_policies(
+                account['terraform_dir'],
+                account, config["project_name"],
+                sso_config['saml_provider_name'],
+                idp['domain']
+            )
 
     def expect_success(self, return_code):
         if return_code != 0:
             raise Exception("Command failed.")
 
-    def build_policies(self, terraform_dir, account, project_name):
+    def build_policies(self, terraform_dir, account, project_name, saml_provider_name, saml_aud):
 
         power_user_roles = self.build_role_list(account['role_mapping']['poweruser'])
         readonly_roles = self.build_role_list(account['role_mapping']['readonly'])
@@ -95,6 +102,8 @@ class Bootstrap:
                                     "-var", f"""env_name={project_name}""",
                                     "-var", f"""power_user_roles={power_user_roles}""",
                                     "-var", f"""readonly_roles={readonly_roles}""",
+                                    "-var", f"""aws_saml_provider={saml_provider_name}""",
+                                    "-var", f"""saml_aud={saml_aud}""",
                                     ],
                                    cwd=f"{os.path.dirname(os.path.realpath(__file__))}/resources/terraform/{terraform_dir}")
         self.expect_success(process.wait())

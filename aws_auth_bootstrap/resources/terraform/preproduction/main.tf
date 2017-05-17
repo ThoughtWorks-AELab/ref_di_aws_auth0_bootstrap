@@ -18,13 +18,13 @@ data "aws_iam_policy_document" "instance-assume-role-policy" {
 
     principals {
       type        = "Federated"
-      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:saml-provider/auth0-preproduction"]
+      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:saml-provider/${var.aws_saml_provider}"]
     }
 
     condition {
       test     = "ForAnyValue:StringLike"
       variable = "SAML:aud"
-      values   = ["https://signin.aws.amazon.com/saml", "urn:dps-reference-implementation.auth0.com"]
+      values   = ["https://signin.aws.amazon.com/saml", "urn:${var.saml_aud}"]
     }
   }
 }

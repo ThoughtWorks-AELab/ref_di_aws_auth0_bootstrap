@@ -24,3 +24,11 @@ variable "readonly_roles" {
   default = ""
 
 }
+
+variable "aws_saml_provider" {
+
+}
+
+variable "saml_aud" {
+
+}

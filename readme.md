@@ -79,6 +79,4 @@ You will need to source this file prior to running the setup.
 
 - terraform:
     - main.tf
-        - parameterize the name of the saml provider in
         aws_iam_policy_document
-        - parameterize urn in SAML:aud condition
