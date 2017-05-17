@@ -55,8 +55,8 @@ def test_deploy_rules():
     Auth0Builder(CONFIG).deploy_rules(client_name, {
         "saml_provider_name": saml_provider_name,
         "roles": [
-            ("auth0-role-1", "aws-role-1"),
-            ("auth0-role-2", "aws-role-2")
+            ("git-group/github-role-1", "aws-role-1"),
+            ("git-group/github-role-2", "aws-role-2")
         ]
     })
     assert_rules_are_deployed()
@@ -66,15 +66,15 @@ def test_deploy_rules_is_idempotent():
     Auth0Builder(CONFIG).deploy_rules(client_name, {
         "saml_provider_name": saml_provider_name,
         "roles": [
-            ("auth0-role-1", "aws-role-1"),
-            ("auth0-role-2", "aws-role-2")
+            ("git-group/github-role-1", "aws-role-1"),
+            ("git-group/github-role-2", "aws-role-2")
         ]
     })
     Auth0Builder(CONFIG).deploy_rules(client_name, {
         "saml_provider_name": saml_provider_name,
         "roles": [
-            ("auth0-role-1", "aws-role-1"),
-            ("auth0-role-2", "aws-role-2")
+            ("git-group/github-role-1", "aws-role-1"),
+            ("git-group/github-role-2", "aws-role-2")
         ]
     })
     assert_rules_are_deployed()
@@ -84,6 +84,8 @@ def test_deploy_rules_is_idempotent():
 # Utility methods
 #
 def assert_rule_is_deployed(name):
+    #TODO: be nice to have a bit more assurance here. We do have the ability to pull the rule down
+    #TODO: and run it with execjs. Could do that....
     rules = list(filter(lambda c: c['name'] == name, AUTH0_CLIENT.rules.all()))
     assert len(rules) == 1
     return rules[0]
