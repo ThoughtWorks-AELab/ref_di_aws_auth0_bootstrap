@@ -6,7 +6,8 @@ setup(
     include_package_data=True,
     install_requires=[
         'auth0-python==3.0.0',
-        'boto3==1.4.4'
+        'boto3==1.4.4',
+        'requests==2.14.2'
     ],
     setup_requires=[
         'pytest-runner',
