@@ -84,8 +84,8 @@ def test_deploy_rules_is_idempotent():
 # Utility methods
 #
 def assert_rule_is_deployed(name):
-    #TODO: be nice to have a bit more assurance here. We do have the ability to pull the rule down
-    #TODO: and run it with execjs. Could do that....
+    # TODO: be nice to have a bit more assurance here. We do have the ability to pull the rule down
+    # TODO: and run it with execjs. Could do that....
     rules = list(filter(lambda c: c['name'] == name, AUTH0_CLIENT.rules.all()))
     assert len(rules) == 1
     return rules[0]
