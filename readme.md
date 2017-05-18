@@ -56,8 +56,6 @@ environment variables:
 You will need to source this file prior to running the setup.
 
 # Known Bugs and Issues
-- mapping main IAM account to other accounts
-
 - github_connection.js
     - Need to set the User Agent programmatically to match the Github
     application name as requested by Github
@@ -69,5 +67,4 @@ You will need to source this file prior to running the setup.
     - fix tests for javascript to catch edge cases like no role assigned
     - end-to-end CLI test
 
-- additional automation
-    - set up github teams from script
+- mapping main IAM account to other accounts

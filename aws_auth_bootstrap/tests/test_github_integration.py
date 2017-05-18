@@ -58,4 +58,3 @@ def validate_member_is_in_team(organization_name, team_name, member_name):
                             headers={"Authorization": f"token {TOKEN}"})
     assert response.status_code == 200
     assert response.json()['state'] == 'active'
-    # assert False

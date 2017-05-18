@@ -52,20 +52,20 @@ class ScriptGenerator:
             }}
         """
 
-    def __generate_role_mapping(self, role_tuple):
+    def __generate_role_mapping(self, role):
         aws_role_function = f"""
             function(user) {{
                 return "arn:aws:iam::" +
                     context.clientMetadata.aws_account_number +
-                    ":role/{role_tuple[1]}";
+                    ":role/{role['aws_role']}";
             }}
         """
 
-        return f"""{{ idpRole:"{role_tuple[0]}", awsRole: {aws_role_function} }}"""
+        return f"""{{ idpRole:"{role['idp_role']}", awsRole: {aws_role_function} }}"""
 
     def __generate_role_map(self, config):
         role_map = reduce(lambda acc, item: acc + ",\n" + item,
-                          map(lambda role_tuple: self.__generate_role_mapping(role_tuple),
+                          map(lambda role: self.__generate_role_mapping(role),
                               config['roles']))
         if config:
             return f"""[

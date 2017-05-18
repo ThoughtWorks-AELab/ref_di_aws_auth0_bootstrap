@@ -30,14 +30,20 @@ def test_generate_policy_from_mapping():
     script = ScriptGenerator().generate_hierarchy({
         "saml_provider_name": "zaml",
         "roles": [
-            ("org_name/auth0-role-1", "aws-role-1"),
-            ("org_name/auth0-role-2", "aws-role-2")
+            {
+                "idp_role": "git-group/github-role-1",
+                "aws_role": "aws-role-1"
+            },
+            {
+                "idp_role": "git-group/github-role-2",
+                "aws_role": "aws-role-2"
+            }
         ]
     })
 
     result = run_test_script(script, user={
         "app_metadata": {
-            "roles": ['org_name/auth0-role-1']
+            "roles": ['git-group/github-role-1']
         },
         "nickname": 'bob'
     }, context={

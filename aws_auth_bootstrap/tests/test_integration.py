@@ -55,8 +55,14 @@ def test_deploy_rules():
     Auth0Builder(CONFIG).deploy_rules(client_name, {
         "saml_provider_name": saml_provider_name,
         "roles": [
-            ("git-group/github-role-1", "aws-role-1"),
-            ("git-group/github-role-2", "aws-role-2")
+            {
+                "idp_role": "git-group/github-role-1",
+                "aws_role": "aws-role-1"
+            },
+            {
+                "idp_role": "git-group/github-role-2",
+                "aws_role": "aws-role-2"
+            }
         ]
     })
     assert_rules_are_deployed()
@@ -66,15 +72,27 @@ def test_deploy_rules_is_idempotent():
     Auth0Builder(CONFIG).deploy_rules(client_name, {
         "saml_provider_name": saml_provider_name,
         "roles": [
-            ("git-group/github-role-1", "aws-role-1"),
-            ("git-group/github-role-2", "aws-role-2")
+            {
+                "idp_role": "git-group/github-role-1",
+                "aws_role": "aws-role-1"
+            },
+            {
+                "idp_role": "git-group/github-role-2",
+                "aws_role": "aws-role-2"
+            }
         ]
     })
     Auth0Builder(CONFIG).deploy_rules(client_name, {
         "saml_provider_name": saml_provider_name,
         "roles": [
-            ("git-group/github-role-1", "aws-role-1"),
-            ("git-group/github-role-2", "aws-role-2")
+            {
+                "idp_role": "git-group/github-role-1",
+                "aws_role": "aws-role-1"
+            },
+            {
+                "idp_role": "git-group/github-role-2",
+                "aws_role": "aws-role-2"
+            }
         ]
     })
     assert_rules_are_deployed()
