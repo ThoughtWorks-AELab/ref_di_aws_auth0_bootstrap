@@ -34,8 +34,14 @@ sso_config = {
         # }
     ],
     "roles": [
-        ("ThoughtWorks-AELab/dev_admin", "dev_admin"),
-        ("ThoughtWorks-AELab/infra_reader", "infra_reader")
+        {
+            "idp_role": "ThoughtWorks-AELab/dev_admin",
+            "aws_role": "dev_admin"
+        },
+        {
+            "idp_role": "ThoughtWorks-AELab/infra_reader",
+            "aws_role": "infra_reader"
+        }
     ]
 }
 

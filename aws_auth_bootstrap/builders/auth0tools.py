@@ -6,7 +6,7 @@ import pkg_resources
 from auth0.v3.authentication import GetToken
 from auth0.v3.management import Auth0
 
-from aws_auth_bootstrap.builders.script_generator import ScriptGenerator
+from aws_auth_bootstrap.builders.role_rule_script_generator import RoleRuleScriptGenerator
 
 resource_package = __name__
 
@@ -22,7 +22,7 @@ class Auth0Builder:
     def __init__(self, config):
         self.config = config
         self.auth0_client = create_auth0_client(config)
-        self.script_generator = ScriptGenerator()
+        self.script_generator = RoleRuleScriptGenerator()
 
     def create_aws_saml_client(self, client_name, account_id):
         matching_clients = list(filter(lambda c: c['name'] == client_name, self.auth0_client.clients.all()))

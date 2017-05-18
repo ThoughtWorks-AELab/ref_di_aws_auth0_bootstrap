@@ -1,7 +1,7 @@
 import json
 import execjs
 
-from aws_auth_bootstrap.builders.script_generator import ScriptGenerator
+from aws_auth_bootstrap.builders.role_rule_script_generator import RoleRuleScriptGenerator
 
 
 def run_test_script(script, user, context):
@@ -27,7 +27,7 @@ def run_test_script(script, user, context):
 
 
 def test_generate_policy_from_mapping():
-    script = ScriptGenerator().generate_hierarchy({
+    script = RoleRuleScriptGenerator().generate_hierarchy({
         "saml_provider_name": "zaml",
         "roles": [
             {

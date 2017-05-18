@@ -65,6 +65,5 @@ You will need to source this file prior to running the setup.
 
 - testing
     - fix tests for javascript to catch edge cases like no role assigned
-    - end-to-end CLI test
 
 - mapping main IAM account to other accounts

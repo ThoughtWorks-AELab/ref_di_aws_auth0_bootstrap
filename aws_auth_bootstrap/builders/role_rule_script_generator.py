@@ -1,7 +1,7 @@
 from functools import reduce
 
 
-class ScriptGenerator:
+class RoleRuleScriptGenerator:
     def __init__(self):
         pass
 
