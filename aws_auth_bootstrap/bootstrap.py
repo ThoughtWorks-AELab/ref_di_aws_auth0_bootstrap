@@ -1,8 +1,10 @@
 import os
 import shutil
 import subprocess
+from copy import copy
 
 from aws_auth_bootstrap.builders.auth0tools import Auth0Builder
+from aws_auth_bootstrap.builders.github_builder import GithubBuilder
 
 resource_package = __name__
 
@@ -13,13 +15,27 @@ class Bootstrap:
         self.check_for_terraform()
 
     def run(self, config):
+
+        github_builder = GithubBuilder(config['idp'])
+        for role in config['roles']:
+            github_builder.create_team(role['idp_role'], [])
+
         auth0builder = Auth0Builder(config["idp"])
+
+        def add_org_name(mapping):
+            org_name = config['idp']['github_organization']
+            new_mapping = copy(mapping)
+            new_mapping['idp_role'] = f"{org_name}/{mapping['idp_role']}"
+            return new_mapping
 
         auth0builder.deploy_rules(config['project_name'], {
             "saml_provider_name": config['saml_provider_name'],
-            "roles": config['roles']
+            "roles": map(lambda role_mapping: add_org_name(role_mapping), config['roles'])
         })
 
+        self.configure_accounts(auth0builder, config)
+
+    def configure_accounts(self, auth0builder, config):
         accounts = config["accounts"]
         idp = config['idp']
         for account in accounts:
@@ -77,4 +93,3 @@ class Bootstrap:
 
     def build_role_list(self, role_array):
         return ", ".join(role_array)
-

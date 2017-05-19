@@ -32,6 +32,9 @@ acceptable, this code will need to be changed to save state of the client ids
 * create a [github oauth application](https://auth0.com/docs/connections/social/github)
 for your personal or group account. You will need the client id and secret.
 
+* create a personal access token for the automation user. That user
+ should be able to manage teams. That can be done here: https://github.com/settings/tokens
+
 * create teams for each role you would like to support within AWS.
 Current bootstrap supports dev_admin and infra_reader
 
@@ -47,8 +50,16 @@ environment variables:
         export PREPROD_AWS_ACCESS_ID=AKIAJRKDMHJTUJ48NOKFA
         export PREPROD_SECRET_ACCESS_KEY=********************
 
+        # Credentials used for the connection to github SSO
         export GITHUB_CLIENT_ID=d5kgjgji58124ifjgjfkc
         export GITHUB_CLIENT_SECRET=*************************
+
+        # A personal access token for the automation user
+        export GITHUB_AUTOMATION_TOKEN=*********************
+
+        #The github org that contains the teams used for automation
+        export GITHUB_ORGANIZATION=OktaOrg
+
 
         chmod 700 .creds
         . .auth0

@@ -10,7 +10,9 @@ sso_config = {
         "client_id": os.environ['AUTH0_CLIENT_ID'],
         "client_secret": os.environ['AUTH0_CLIENT_SECRET'],
         "github_client_id": os.environ['GITHUB_CLIENT_ID'],
-        "github_client_secret": os.environ['GITHUB_CLIENT_SECRET']
+        "github_client_secret": os.environ['GITHUB_CLIENT_SECRET'],
+        "github_organization": os.environ['GITHUB_ORGANIZATION'],
+        "github_automation_token": os.environ['GITHUB_AUTOMATION_TOKEN']
     },
     "accounts": [
         {
@@ -35,11 +37,11 @@ sso_config = {
     ],
     "roles": [
         {
-            "idp_role": "ThoughtWorks-AELab/dev_admin",
+            "idp_role": "dev_admin",
             "aws_role": "dev_admin"
         },
         {
-            "idp_role": "ThoughtWorks-AELab/infra_reader",
+            "idp_role": "infra_reader",
             "aws_role": "infra_reader"
         }
     ]

@@ -9,6 +9,10 @@ ORG_NAME = "thoughtworks-dps-testing"
 TEAM_NAME = 'team' + str(int(time() * 1000))
 TOKEN = os.environ['GITHUB_TEST_USER_TOKEN']
 MEMBER_NAME = 'thoughtworks-dps-machine-account-2'
+CONFIG = {
+    "github_automation_token": TOKEN,
+    "github_organization": ORG_NAME
+}
 
 
 def teardown_function(fn):
@@ -16,12 +20,9 @@ def teardown_function(fn):
 
 
 def test_build_teams():
-    config = {
-        "token": TOKEN,
-        "organization": ORG_NAME
-    }
 
-    GithubBuilder(config).create_team(TEAM_NAME, {
+
+    GithubBuilder(CONFIG).create_team(TEAM_NAME, {
         MEMBER_NAME
     })
 
@@ -29,11 +30,23 @@ def test_build_teams():
     validate_member_is_in_team(ORG_NAME, TEAM_NAME, MEMBER_NAME)
 
 
+def test_bulid_test_is_idemponent():
+    GithubBuilder(CONFIG).create_team(TEAM_NAME, {
+        MEMBER_NAME
+    })
+    GithubBuilder(CONFIG).create_team(TEAM_NAME, {
+        MEMBER_NAME
+    })
+    validate_team_exists(ORG_NAME, TEAM_NAME)
+    validate_member_is_in_team(ORG_NAME, TEAM_NAME, MEMBER_NAME)
+
+
 def delete_team(organization_name, team_name):
     teams = get_teams_by_name(organization_name, team_name)
     for team in teams:
-        requests.delete(f"https://api.github.com/teams/{team['id']}",
-                        headers={"Authorization": f"token {TOKEN}"})
+        response = requests.delete(f"https://api.github.com/teams/{team['id']}",
+                                   headers={"Authorization": f"token {TOKEN}"})
+        assert response.status_code == 204
 
 
 def get_teams_by_name(organization_name, team_name):
