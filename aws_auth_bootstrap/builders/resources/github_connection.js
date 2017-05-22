@@ -9,7 +9,7 @@ function (user, context, callback) {
         headers: {
             // use token authorization to talk to github API
             "Authorization": "token "+access_token,
-            "User-Agent": "Auth0 Github Connection",
+            "User-Agent": "${USER_AGENT}",
         }
     }, function(err, res, data){
         user.err = err;

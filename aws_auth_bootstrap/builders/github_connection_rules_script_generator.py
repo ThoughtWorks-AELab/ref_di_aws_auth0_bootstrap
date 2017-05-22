@@ -7,4 +7,5 @@ class GithubConnectionRuleScriptGenerator:
         self.script = str(pkg_resources.resource_string(resource_package, 'resources/github_connection.js'), "utf=8")
 
     def generate(self, config):
-        return self.script
+        user_agent = config['user_agent']
+        return self.script.replace("${USER_AGENT}", user_agent)

@@ -5,7 +5,7 @@ var request = {
             config.url == 'https://api.github.com/user/teams' &&
             config.headers &&
             config.headers["Authorization"] == "token the-access-token" &&
-            config.headers["User-Agent"] == "Auth0 Github Connection"
+            config.headers["User-Agent"] == "my client name"
             ) {
             callback(null, null, JSON.stringify([
                 {
