@@ -16,14 +16,14 @@ class Bootstrap:
 
     def run(self, config):
 
-        github_builder = GithubBuilder(config['idp'])
+        github_builder = GithubBuilder(config['github'])
         for role in config['roles']:
             github_builder.create_team(role['idp_role'], [])
 
         auth0builder = Auth0Builder(config["idp"])
 
         def add_org_name(mapping):
-            org_name = config['idp']['github_organization']
+            org_name = config['github']['github_organization']
             new_mapping = copy(mapping)
             new_mapping['idp_role'] = f"{org_name}/{mapping['idp_role']}"
             return new_mapping
@@ -38,11 +38,12 @@ class Bootstrap:
     def configure_accounts(self, auth0builder, config):
         accounts = config["accounts"]
         idp = config['idp']
+        github = config['github']
         for account in accounts:
             auth0builder.configure_sso(account['name'],
                                        account['aws_account_number'],
-                                       idp['github_client_id'],
-                                       idp['github_client_secret'])
+                                       github['github_client_id'],
+                                       github['github_client_secret'])
             self.build_policies(
                 account['terraform_dir'],
                 account, config["project_name"],

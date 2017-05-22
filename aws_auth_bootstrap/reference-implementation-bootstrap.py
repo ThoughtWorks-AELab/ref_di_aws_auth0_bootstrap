@@ -5,14 +5,17 @@ from aws_auth_bootstrap.bootstrap import Bootstrap
 sso_config = {
     "project_name": "reference-implementation",
     "saml_provider_name": "auth0-preproduction",
-    "idp": {
-        "domain": os.environ['AUTH0_HOST'] + ".auth0.com",
-        "client_id": os.environ['AUTH0_CLIENT_ID'],
-        "client_secret": os.environ['AUTH0_CLIENT_SECRET'],
+    "github": {
+        "github_application_name": "Auth0 SSO DPS Reference Implementation",
         "github_client_id": os.environ['GITHUB_CLIENT_ID'],
         "github_client_secret": os.environ['GITHUB_CLIENT_SECRET'],
         "github_organization": os.environ['GITHUB_ORGANIZATION'],
         "github_automation_token": os.environ['GITHUB_AUTOMATION_TOKEN']
+    },
+    "idp": {
+        "domain": os.environ['AUTH0_HOST'] + ".auth0.com",
+        "client_id": os.environ['AUTH0_CLIENT_ID'],
+        "client_secret": os.environ['AUTH0_CLIENT_SECRET']
     },
     "accounts": [
         {
