@@ -8,10 +8,9 @@ class RoleRuleScriptGenerator:
     # TODO: check client id
     # TODO: check protocol and if it's delegated, set the add on configuration
     def generate_hierarchy(self, config):
-        print(config)
         return f"""
             function (user, context, callback) {{
-                clientIds = {self.__generate_client_Ids(config)} ;
+                var clientIds = {self.__generate_client_Ids(config)} ;
                 if (clientIds[context.clientID]) {{
                     var roleMapping = {self.__generate_role_map(config)};
                     var role = "";

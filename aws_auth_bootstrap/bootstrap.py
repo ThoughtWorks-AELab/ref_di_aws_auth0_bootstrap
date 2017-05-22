@@ -29,7 +29,7 @@ class Bootstrap:
             return new_mapping
 
         account_configs = self.configure_accounts(auth0builder, config)
-        client_ids = map(lambda account_config: account_config['client']['clientID'], account_configs)
+        client_ids = map(lambda account_config: account_config['client']['client_id'], account_configs)
 
         auth0builder.deploy_rules(config['project_name'], {
             "client_ids": client_ids,
