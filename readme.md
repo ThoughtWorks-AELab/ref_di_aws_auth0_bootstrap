@@ -70,10 +70,6 @@ You will need to source this file prior to running the setup.
 - RoleRuleScriptGenerator
     - validate client id before doing team => role mapping
 
-- github_connection.js
-    - Need to set the User Agent programmatically to match the Github
-    application name as requested by Github
-
 - bootstrap.py
     - validation for config structure so there are better error messages
 

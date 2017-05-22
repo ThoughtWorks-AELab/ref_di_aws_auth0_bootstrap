@@ -3,19 +3,18 @@ import requests
 
 class GithubBuilder:
     def __init__(self, config):
-        # TODO: validate required fields
-        self.config = config
+        self.github_organization = config['github_organization']
+        self.github_automation_token = config['github_automation_token']
 
     def create_team(self, team_name, team_members_names):
-        organization_name = self.config['github_organization']
-        if not self.__team_exists(organization_name, team_name):
+        if not self.__team_exists(self.github_organization, team_name):
             print(f"Creating team {team_name}")
-            response = requests.post(f"https://api.github.com/orgs/{organization_name}/teams",
+            response = requests.post(f"https://api.github.com/orgs/{self.github_organization}/teams",
                                      json={
                                          "name": team_name
                                      },
                                      headers={
-                                         "Authorization": f"token {self.config['github_automation_token']}"
+                                         "Authorization": f"token {self.github_automation_token}"
                                      }
                                      )
             if response.status_code != 201:
@@ -32,7 +31,7 @@ class GithubBuilder:
     def add_member_to_team(self, team_id, member_name):
         response = requests.put(f"https://api.github.com/teams/{team_id}/memberships/{member_name} ",
                                 headers={
-                                    "Authorization": f"token {self.config['github_automation_token']}"
+                                    "Authorization": f"token {self.github_automation_token}"
                                 }
                                 )
         if response.status_code != 200:
@@ -42,4 +41,4 @@ class GithubBuilder:
     def __team_exists(self, organization_name, team_name):
         return len(list(filter(lambda team: team['name'] == team_name,
                                requests.get(f"https://api.github.com/orgs/{organization_name}/teams", headers={
-                                   "Authorization": f"token {self.config['github_automation_token']}"}).json()))) == 1
+                                   "Authorization": f"token {self.github_automation_token}"}).json()))) == 1

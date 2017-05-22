@@ -41,12 +41,8 @@ class Auth0Builder:
             del (create_client_request['jwt_configuration']['secret_encoded'])
             return self.auth0_client.clients.update(matching_clients[0]['client_id'], create_client_request)
 
-    def get_saml_metadata_document(self, auth0_host, client_id):
-        # TODO: check return code
-        return urllib.request.urlopen(f"https://{auth0_host}/samlp/metadata/{client_id}").read().decode("utf-8")
-
     def create_aws_saml_provider(self, client_id, name):
-        saml_metadata_document = self.get_saml_metadata_document(self.config['domain'], client_id)
+        saml_metadata_document = self.__get_saml_metadata_document(self.config['domain'], client_id)
         client = boto3.client('iam')
         matching_saml_providers = list(
             filter(lambda provider: provider["Arn"].endswith(name), client.list_saml_providers()['SAMLProviderList']))
@@ -93,20 +89,20 @@ class Auth0Builder:
         self.deploy_rule_hierarchy(client_name, config)
 
     def deploy_rule_hierarchy(self, role_hierarchy_rule_name, config):
-        self.deploy_or_overwrite_rule({
+        self.__deploy_or_overwrite_rule({
             "name": role_hierarchy_rule_name + "-hierarchy-rule",
             "script": self.script_generator.generate_hierarchy(config),
             "stage": "login_success"
         })
 
     def deploy_github_connection_rule(self, client_name):
-        self.deploy_or_overwrite_rule({
+        self.__deploy_or_overwrite_rule({
             "name": client_name + "-github-rule",
             "script": pkg_resources.resource_string(resource_package, 'resources/github_connection.js').decode("utf-8"),
             "stage": "login_success"
         })
 
-    def deploy_or_overwrite_rule(self, body):
+    def __deploy_or_overwrite_rule(self, body):
         rules = list(filter(lambda c: c['name'] == body['name'], self.auth0_client.rules.all()))
         if len(rules) == 0:
             print(f"Creating rule {body['name']}")
@@ -117,3 +113,11 @@ class Auth0Builder:
                 "name": body['name'],
                 "script": body['script']
             })
+
+    def __get_saml_metadata_document(self, auth0_host, client_id):
+        response = urllib.request.urlopen(f"https://{auth0_host}/samlp/metadata/{client_id}")
+        if response.status != 200:
+            print(f"Request to SAMLP endpoint failed with {response.status} - {response.reason}")
+            raise Exception("Failed to get SAML metadata document")
+        else:
+            return response.read().decode("utf-8")
