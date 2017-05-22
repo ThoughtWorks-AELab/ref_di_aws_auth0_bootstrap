@@ -7,7 +7,7 @@ from aws_auth_bootstrap.builders.auth0tools import Auth0Builder, create_auth0_cl
 
 client_name = 'testaccount' + str(int(time() * 1000))
 account_id = "123-123-123"
-saml_provider_name = "auth0-" + client_name
+saml_provider_name = "auth0-sso"
 role_hierarchy_rule_name = client_name + "-hierarchy-rule"
 github_connection_rule_name = client_name + "-github-rule"
 github_connection_name = client_name + "-connection"
@@ -53,6 +53,7 @@ def test_saml_client_creation_is_idempotent():
 
 def test_deploy_rules():
     Auth0Builder(CONFIG).deploy_rules(client_name, {
+        "client_ids": ['1234'],
         "saml_provider_name": saml_provider_name,
         "roles": [
             {
@@ -70,6 +71,7 @@ def test_deploy_rules():
 
 def test_deploy_rules_is_idempotent():
     Auth0Builder(CONFIG).deploy_rules(client_name, {
+        "client_ids": ['1234'],
         "saml_provider_name": saml_provider_name,
         "roles": [
             {
@@ -83,6 +85,7 @@ def test_deploy_rules_is_idempotent():
         ]
     })
     Auth0Builder(CONFIG).deploy_rules(client_name, {
+        "client_ids": ['1234'],
         "saml_provider_name": saml_provider_name,
         "roles": [
             {

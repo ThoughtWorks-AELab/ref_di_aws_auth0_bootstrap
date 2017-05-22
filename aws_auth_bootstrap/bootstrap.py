@@ -28,28 +28,33 @@ class Bootstrap:
             new_mapping['idp_role'] = f"{org_name}/{mapping['idp_role']}"
             return new_mapping
 
+        account_configs = self.configure_accounts(auth0builder, config)
+        client_ids = map(lambda account_config: account_config['client']['clientID'], account_configs)
+
         auth0builder.deploy_rules(config['project_name'], {
+            "client_ids": client_ids,
             "saml_provider_name": config['saml_provider_name'],
             "roles": map(lambda role_mapping: add_org_name(role_mapping), config['roles'])
         })
-
-        self.configure_accounts(auth0builder, config)
 
     def configure_accounts(self, auth0builder, config):
         accounts = config["accounts"]
         idp = config['idp']
         github = config['github']
+        account_configs = []
         for account in accounts:
-            auth0builder.configure_sso(account['name'],
+            account_config = auth0builder.configure_sso(account['name'],
                                        account['aws_account_number'],
                                        github['github_client_id'],
                                        github['github_client_secret'])
+            account_configs.append(account_config)
             self.build_policies(
                 account['terraform_dir'],
                 account, config["project_name"],
                 config['saml_provider_name'],
                 idp['domain']
             )
+        return account_configs
 
     def expect_success(self, return_code):
         if return_code != 0:

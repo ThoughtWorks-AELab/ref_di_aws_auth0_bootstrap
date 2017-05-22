@@ -60,7 +60,7 @@ class Auth0Builder:
 
     def configure_sso(self, client_name, account_id, github_client_id, github_client_secret):
         new_client = self.create_aws_saml_client(client_name, account_id)
-        new_provider = self.create_aws_saml_provider(new_client['client_id'], "auth0-" + client_name)
+        new_provider = self.create_aws_saml_provider(new_client['client_id'], "auth0-sso")
         new_connection = self.create_github_connection(f"{client_name}-connection", new_client['client_id'],
                                                        github_client_id, github_client_secret)
         return {"client": new_client, "provider": new_provider, "connection": new_connection}
