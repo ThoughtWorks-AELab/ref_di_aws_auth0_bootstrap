@@ -67,6 +67,9 @@ environment variables:
 You will need to source this file prior to running the setup.
 
 # Known Bugs and Issues
+- RoleRuleScriptGenerator
+    - validate client id before doing team => role mapping
+
 - github_connection.js
     - Need to set the User Agent programmatically to match the Github
     application name as requested by Github
