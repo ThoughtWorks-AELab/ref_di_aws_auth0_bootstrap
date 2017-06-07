@@ -1,6 +1,9 @@
 ## Requirements
 * virtualenv
+* terraform >= 0.9.3
 * an auth0 account
+* a GitHub account
+* an AWS account
 
 ## Assumptions
 * Names are unique. This is not enforced by auth0, but we will overwrite
@@ -11,9 +14,10 @@ acceptable, this code will need to be changed to save state of the client ids
 * prepare the python environment
 
         virtualenv -p python3 .env
+        . .env/bin/activate
 
-* create an auth0 [non-interactive client](https://auth0.com/docs/api/management/v2/tokens#1-create-a-client).
-    You might have to [enable the APIs feature](https://manage.auth0.com/#/account/advanced)
+* create an auth0 [non-interactive client](https://auth0.com/docs/api/management/v2/tokens#1-create-a-client) for the
+  Auth0 Management API.  You might have to [enable the APIs feature](https://manage.auth0.com/#/account/advanced)
     in your advanced settings.
 
     Makes sure to grant the following scopes to the client:
@@ -25,6 +29,7 @@ acceptable, this code will need to be changed to save state of the client ids
     * read:rules
     * update:rules
     * delete:rules
+    * create:connections
     * read:connections
     * update:connections
     * delete:connections
@@ -42,7 +47,7 @@ Current bootstrap supports dev_admin and infra_reader
 environment variables:
 
         #.auth0
-        export AUTH0_DOMAIN=myaccount.auth0.com
+        export AUTH0_HOST=myaccount
         export AUTH0_CLIENT_ID=exampleid
         export AUTH0_CLIENT_SECRET=********
 
@@ -63,8 +68,14 @@ environment variables:
 
         chmod 700 .creds
         . .auth0
-
+* Create an S3 bucket for your terraform remote config. The name should be
+  `reference-implementation-preproduction-$AUTH0_HOST.auth0.com` (using AUTH0\_HOST from the above document)
 You will need to source this file prior to running the setup.
+
+## Running
+
+Assuming you have set everything up and sourced `.env/bin/activate` and `.auth0`, you should be able to run this by
+calling `python setup.py install && python aws_auth_bootstrap/reference-implementation-bootstrap.py`
 
 # Known Bugs and Issues
 - RoleRuleScriptGenerator

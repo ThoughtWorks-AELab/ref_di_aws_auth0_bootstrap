@@ -46,7 +46,9 @@ class Bootstrap:
             account_config = auth0builder.configure_sso(account['name'],
                                        account['aws_account_number'],
                                        github['github_client_id'],
-                                       github['github_client_secret'])
+                                       github['github_client_secret'],
+                                       config['saml_provider_name']
+                                       )
             account_configs.append(account_config)
             self.build_policies(
                 account['terraform_dir'],
@@ -65,8 +67,7 @@ class Bootstrap:
         power_user_roles = self.build_role_list(account['role_mapping']['poweruser'])
         readonly_roles = self.build_role_list(account['role_mapping']['readonly'])
 
-        bucket_name = f"{project_name}-{account['name']}"
-
+        bucket_name = f"{project_name}-{account['name']}-{saml_aud}"
         command = ["terraform", "init", "-backend=true",
                    f"-backend-config=bucket={bucket_name}",
                    "-lock=true",
