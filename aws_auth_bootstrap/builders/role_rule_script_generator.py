@@ -5,8 +5,6 @@ class RoleRuleScriptGenerator:
     def __init__(self):
         pass
 
-    # TODO: check client id
-    # TODO: check protocol and if it's delegated, set the add on configuration
     def generate_hierarchy(self, config):
         return f"""
             function (user, context, callback) {{
