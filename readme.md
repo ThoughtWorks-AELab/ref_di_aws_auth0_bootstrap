@@ -1,6 +1,7 @@
 ## Pre-requisites
 * virtualenv
 * terraform >= 0.9.3
+* python >= 3.6.0
 * an auth0 account
 * a GitHub account
 * an AWS account
