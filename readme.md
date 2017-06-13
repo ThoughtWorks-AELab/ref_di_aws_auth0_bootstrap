@@ -40,7 +40,9 @@ for your personal or group account. You will need the client id and secret.
 * create a personal access token for the automation user. That user
  should be able to manage teams. That can be done here: https://github.com/settings/tokens
 
-* create teams for each role you would like to support within AWS.
+* create an organization in GitHub
+
+* create teams in GitHub under that organization for each role you would like to support within AWS.
 Current bootstrap supports dev_admin and infra_reader
 
 * Create a file called .auth0 that only you can read that will set
@@ -65,12 +67,11 @@ environment variables:
         #The github org that contains the teams used for automation
         export GITHUB_ORGANIZATION=OktaOrg
 
-
-        chmod 700 .creds
-        . .auth0
+* Execute the following commands
+        $ chmod 700 .auth0
+        $ . .auth0
 * Create an S3 bucket for your terraform remote config. The name should be
   `reference-implementation-preproduction-$AUTH0_HOST.auth0.com` (using AUTH0\_HOST from the above document)
-You will need to source this file prior to running the setup.
 
 ## Running
 
