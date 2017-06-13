@@ -44,7 +44,7 @@ for your personal or group account. You will need the client id and secret.
 * create an organization in GitHub
 
 * create teams in GitHub under that organization for each role you would like to support within AWS.
-Current bootstrap supports dev_admin and infra_reader
+Current bootstrap supports dev_admin and infra_reader as team names.
 
 * In your AWS credentials file (~/.aws/credentials), set up a profile for the AWS access id and secret access key
 
