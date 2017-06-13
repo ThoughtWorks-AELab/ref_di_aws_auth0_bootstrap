@@ -71,6 +71,7 @@ environment variables:
         export GITHUB_ORGANIZATION=OktaOrg
 
 * Execute the following commands
+
         $ chmod 700 .auth0
         $ . .auth0
 
