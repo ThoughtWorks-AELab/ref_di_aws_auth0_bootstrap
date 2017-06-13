@@ -44,7 +44,7 @@ class BackendHandler(SimpleHTTPRequestHandler):
         # this space intentionally left blank
         return
     def do_GET(self):
-        elif self.path.startswith("/code"):
+        if self.path.startswith("/code"):
             auth_code = parse_qs(urlparse(self.path).query)['code'][0]
             token_resp = token_exchange(auth_code)
             id_token = token_resp["id_token"]
