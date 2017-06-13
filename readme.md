@@ -99,7 +99,7 @@ calling `python setup.py install && python aws_auth_bootstrap/reference-implemen
 ## Web Console access
 
 To login to the web console, you will need to visit `https://<AUTH0_HOST>.auth0.com/samlp/<generated_auth0_client_id>`
-and then login with the GitHub connection.
+and then login with the GitHub connection. This requires granting authorization to the organization you created.
 
 ## CLI access
 
