@@ -46,6 +46,8 @@ for your personal or group account. You will need the client id and secret.
 * create teams in GitHub under that organization for each role you would like to support within AWS.
 Current bootstrap supports dev_admin and infra_reader
 
+* In your AWS credentials file (~/.aws/credentials), set up a profile for the AWS access id and secret access key
+
 * Create a file called .auth0 that only you can read that will set
 environment variables:
 
@@ -71,7 +73,8 @@ environment variables:
 * Execute the following commands
         $ chmod 700 .auth0
         $ . .auth0
-* Create an S3 bucket for your terraform remote config. The name should be
+
+* Create an S3 bucket in us-west-2 region for your terraform remote config. The name should be
   `reference-implementation-preproduction-$AUTH0_HOST.auth0.com` (using AUTH0\_HOST from the above document)
 
 ## Running
