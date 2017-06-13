@@ -17,9 +17,6 @@ ENVIRONMENT = {
     "client_id": os.environ['AUTH0_CLIENT_ID']
     }
 
-def env():
-    return json.dumps(ENVIRONMENT)
-
 def token_exchange(code):
     params = {}
     params["code_verifier"] = challenge.generate()["verifier"]
@@ -47,20 +44,6 @@ class BackendHandler(SimpleHTTPRequestHandler):
         # this space intentionally left blank
         return
     def do_GET(self):
-        if self.path.startswith("/env"):
-            response = bytearray(env(), "utf-8")
-            self.send_response(200)
-            self.send_header("Content-type", "application/json")
-            self.send_header("Content-length", str(len(response)))
-            self.end_headers()
-            self.wfile.write(response)
-        if self.path.startswith("/callback"):
-            response = bytearray(self.path, "utf-8")
-            self.send_response(200)
-            self.send_header("Content-type", "application/json")
-            self.send_header("Content-length", str(len(response)))
-            self.end_headers()
-            self.wfile.write(response)
         elif self.path.startswith("/code"):
             auth_code = parse_qs(urlparse(self.path).query)['code'][0]
             token_resp = token_exchange(auth_code)
