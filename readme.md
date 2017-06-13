@@ -1,4 +1,4 @@
-## Requirements
+## Pre-requisites
 * virtualenv
 * terraform >= 0.9.3
 * an auth0 account
@@ -13,8 +13,8 @@ acceptable, this code will need to be changed to save state of the client ids
 ## Installation
 * prepare the python environment
 
-        virtualenv -p python3 .env
-        . .env/bin/activate
+        $ virtualenv -p python3 .env
+        $ . .env/bin/activate
 
 * create an auth0 [non-interactive client](https://auth0.com/docs/api/management/v2/tokens#1-create-a-client) for the
   Auth0 Management API.  You might have to [enable the APIs feature](https://manage.auth0.com/#/account/advanced)
