@@ -95,6 +95,12 @@ calling `python setup.py install && python aws_auth_bootstrap/reference-implemen
 
 - mapping main IAM account to other accounts
 
+- Auth0 clients created after 8 June 2017 will not have access to the needed grant type:
+`http://auth0.com/oauth/legacy/grant-type/delegation/id_token` and need to open a ticket
+with support to have this added to your auth0 account
+
+- Once you have this grant type added to your account, if you are trying to use an existing client, you can update the client via the [auth0 API](https://auth0.com/docs/api/management/v2)
+
 # Logging in
 
 ## Web Console access
